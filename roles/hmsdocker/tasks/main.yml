@@ -37,20 +37,21 @@
           {{
             traefik_ext_hosts_list | json_query('[?enabled==true].subdomain_name')
           }}
-    # This is what ChatGPT said would be best and it accomplishes what I want. It's ugly I know
-    authentik_proxy_enabled_containers: >
-          [
-          {% for item in hms_docker_container_map | dict2items
-              if item.value.enabled is defined and item.value.enabled == true
-              and item.value.traefik is defined and item.value.traefik == true
-              and item.value.authentik is defined and item.value.authentik == true
-              and item.value.proxy_host_rule is defined %}
-            {
-              "name": "{{ item.key }}",
-              "proxy_host_rule": "{{ item.value.proxy_host_rule }}"
-            }{% if not loop.last %},{% endif %}
-          {% endfor %}
-          ]
+    filtered_authentik_items: >-
+          {{
+            hms_docker_container_map | dict2items |
+            selectattr('value.enabled', 'defined') |
+            selectattr('value.enabled', 'equalto', true) |
+            selectattr('value.traefik', 'defined') |
+            selectattr('value.traefik', 'equalto', true) |
+            selectattr('value.authentik', 'defined') |
+            selectattr('value.authentik', 'equalto', true) |
+            selectattr('value.proxy_host_rule', 'defined')
+          }}
+
+- name: Set authentik proxy enabled containers list
+  ansible.builtin.set_fact:
+    authentik_proxy_enabled_containers: "{{ filtered_authentik_items | json_query('[].{name: key, proxy_host_rule: value.proxy_host_rule}') }}"
 
 - name: Get list of container task files in the role
   ansible.builtin.set_fact:
