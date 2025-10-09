@@ -169,7 +169,7 @@ hms_docker_container_map:
     homepage: yes
     homepage_stats: no
   homepage:
-    enabled: no
+    enabled: yes
     proxy_host_rule: homepage
     directory: yes
     traefik: yes
