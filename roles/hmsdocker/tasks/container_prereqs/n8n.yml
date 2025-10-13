@@ -1,0 +1,18 @@
+---
+- name: n8n Prereq - Ensure n8n data directory exists with correct permissions
+  ansible.builtin.file:
+    path: "{{ hms_docker_apps_path }}/n8n/data"
+    state: directory
+    mode: 0755
+    owner: "{{ container_uid }}"
+    group: "{{ container_gid }}"
+    recurse: yes
+
+- name: n8n Prereq - Ensure n8n files directory exists with correct permissions
+  ansible.builtin.file:
+    path: "{{ hms_docker_apps_path }}/n8n/files"
+    state: directory
+    mode: 0755
+    owner: "{{ container_uid }}"
+    group: "{{ container_gid }}"
+    recurse: yes

@@ -54,6 +54,10 @@ Have one you want to add? Submit an [Issue](https://github.com/ahembree/ansible-
 - [Cloudflare-ddns](https://hub.docker.com/r/oznu/cloudflare-ddns/): dynamic dns (if enabled)
 - [Cloudflare Tunnel](https://hub.docker.com/r/cloudflare/cloudflared): Allows you to expose HTTP services without port-forwarding on your router, [see here](https://www.cloudflare.com/products/tunnel/) for more info
 
+## Automation
+
+- [n8n](https://github.com/n8n-io/n8n): workflow automation platform
+
 ## Misc
 
 - [Portainer](https://hub.docker.com/r/portainer/portainer): container management GUI
