@@ -16,7 +16,7 @@ services:
       - N8N_HOST={{ hms_docker_container_map['n8n']['proxy_host_rule'] | default('n8n') }}.${HMSD_DOMAIN}
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
-      - WEBHOOK_URL=https://{{ hms_docker_container_map['n8n']['proxy_host_rule'] | default('n8n') }}.${HMSD_DOMAIN}/
+      - WEBHOOK_URL=https://{{ hms_docker_container_map['n8n']['proxy_host_rule'] | default('n8n') }}.${HMSD_DOMAIN}
       - GENERIC_TIMEZONE=${TIMEZONE}
       - N8N_SECURE_COOKIE=false
       - N8N_METRICS=true

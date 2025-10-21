@@ -11,6 +11,9 @@ container_enable_auto_updates: yes
 # The cron-style schedule for the watchtower container to check for updates in UTC time // default: "0 0 9 * * *"
 container_auto_update_schedule: "0 0 9 * * *"
 
+# Slack webhook URL for watchtower notifications (optional) // default: ""
+watchtower_webhook: ""
+
 # Will stop and remove containers that you disable within the container map (defined below) // default: "yes"
 container_remove_orphans: yes
 
