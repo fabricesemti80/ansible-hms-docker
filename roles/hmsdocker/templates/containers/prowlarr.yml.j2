@@ -21,8 +21,13 @@ services:
     ports:
       - 9696:9696
     {% endif %}
-    {% if hmsdocker_traefik_enabled_prowlarr or hmsdocker_homepage_enabled_prowlarr %}
+    {% if hmsdocker_traefik_enabled_prowlarr or hmsdocker_homepage_enabled_prowlarr or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['prowlarr']['proxy_host_rule'] | default('prowlarr') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=9696
+      - dockpeek.tags=indexer,*arr,search
+      {% endif %}
       {% if hmsdocker_traefik_enabled_prowlarr %}
       - traefik.enable=true
       - traefik.http.services.prowlarr-${COMPOSE_PROJECT}.loadbalancer.server.port=9696

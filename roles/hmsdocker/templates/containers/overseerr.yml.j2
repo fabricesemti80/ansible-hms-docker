@@ -14,8 +14,13 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TIMEZONE}
-    {% if hmsdocker_traefik_enabled_overseerr or hmsdocker_homepage_enabled_overseerr %}
+    {% if hmsdocker_traefik_enabled_overseerr or hmsdocker_homepage_enabled_overseerr or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['overseerr']['proxy_host_rule'] | default('overseerr') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=5055
+      - dockpeek.tags=media,requests,web-ui
+      {% endif %}
       {% if hmsdocker_traefik_enabled_overseerr %}
       - traefik.enable=true
       - traefik.http.services.overseerr-${COMPOSE_PROJECT}.loadbalancer.server.port=5055

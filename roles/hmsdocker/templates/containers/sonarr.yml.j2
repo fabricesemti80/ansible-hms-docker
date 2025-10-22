@@ -15,8 +15,13 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TIMEZONE}
-    {% if hmsdocker_traefik_enabled_sonarr or hmsdocker_homepage_enabled_sonarr %}
+    {% if hmsdocker_traefik_enabled_sonarr or hmsdocker_homepage_enabled_sonarr or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['sonarr']['proxy_host_rule'] | default('sonarr') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=8989
+      - dockpeek.tags=media,tv-shows,*arr
+      {% endif %}
       {% if hmsdocker_traefik_enabled_sonarr %}
       - traefik.enable=true
       - traefik.http.services.sonarr-${COMPOSE_PROJECT}.loadbalancer.server.port=8989
