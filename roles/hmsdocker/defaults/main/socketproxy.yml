@@ -1,0 +1,8 @@
+### Socket Proxy Settings
+socketproxy_enabled: no # default: `no`
+socketproxy_networks: # optional: list of networks to connect to (e.g., ['proxy_net'])
+socketproxy_expose_events: no # default: `no` - expose Docker events API
+socketproxy_expose_info: no # default: `no` - expose Docker info API
+socketproxy_expose_images: no # default: `no` - expose Docker images API
+socketproxy_expose_networks: no # default: `no` - expose Docker networks API
+socketproxy_expose_volumes: no # default: `no` - expose Docker volumes API

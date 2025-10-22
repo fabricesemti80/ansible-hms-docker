@@ -1,0 +1,38 @@
+services:
+  socketproxy:
+    image: tecnativa/docker-socket-proxy:latest
+    container_name: socketproxy
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CONTAINERS=1
+      - SERVICES=1
+      - TASKS=1
+      - POST=0
+    {% if socketproxy_expose_events | default(false) %}
+      - EVENTS=1
+    {% endif %}
+    {% if socketproxy_expose_info | default(false) %}
+      - INFO=1
+    {% endif %}
+    {% if socketproxy_expose_images | default(false) %}
+      - IMAGES=1
+    {% endif %}
+    {% if socketproxy_expose_networks | default(false) %}
+      - NETWORKS=1
+    {% endif %}
+    {% if socketproxy_expose_volumes | default(false) %}
+      - VOLUMES=1
+    {% endif %}
+    {% if socketproxy_networks is defined %}
+    networks:
+      {% for network in socketproxy_networks %}
+      - {{ network }}
+      {% endfor %}
+    {% endif %}

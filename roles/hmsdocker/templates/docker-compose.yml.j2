@@ -17,6 +17,9 @@ include:
 {% if hmsdocker_container_enabled_tailscale and tailscale_compose_file_path is defined | default(False) %}
   - {{ tailscale_compose_file_path.dest | default(compose_dir.path + '/tailscale.yml') }}
 {% endif %}
+{% if hmsdocker_container_enabled_socketproxy and socketproxy_compose_file_path is defined | default(False) %}
+  - {{ socketproxy_compose_file_path.dest | default(compose_dir.path + '/socketproxy.yml') }}
+{% endif %}
 
 networks:
   download_net:
