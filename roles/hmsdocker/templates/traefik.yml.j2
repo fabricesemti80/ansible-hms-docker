@@ -68,7 +68,11 @@ serversTransport:
 providers:
   docker:
     network: "{{ project_name }}_proxy_net"
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+    endpoint: tcp://socketproxy:2375
+    {% else %}
     endpoint: unix:///var/run/docker.sock
+    {% endif %}
     exposedByDefault: false
     defaultRule: {% raw %}Host(`{{if index .Labels "com.docker.compose.service" }}{{ index .Labels "com.docker.compose.service" }}{% endraw %}.{{ hms_docker_domain }}{% raw %}{{else}}{{ trimPrefix `/` .Name }}{% endraw %}.{{ hms_docker_domain }}{% raw %}{{end}}`){% endraw +%}
   file:

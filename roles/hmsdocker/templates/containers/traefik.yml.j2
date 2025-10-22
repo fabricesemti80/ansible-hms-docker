@@ -24,8 +24,14 @@ services:
     {% endif %}
     networks:
       - proxy_net
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+    depends_on:
+      - socketproxy
+    {% endif %}
     volumes:
+    {% if not (hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false)) %}
       - /var/run/docker.sock:/var/run/docker.sock
+    {% endif %}
       - ${HMSD_APPS_PATH}/traefik/config/traefik.yml:/etc/traefik/traefik.yml
       - ${HMSD_APPS_PATH}/traefik/config/certs/:/certs/
       - {{ hmsdocker_traefik_static_config_location }}:/etc/traefik/static_files
