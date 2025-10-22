@@ -11,11 +11,16 @@ services:
     networks:
       - proxy_net
     volumes:
+    {% if not (hmsdocker_container_enabled_socketproxy | default(false)) %}
       - /var/run/docker.sock:/var/run/docker.sock
+    {% endif %}
       - ${HMSD_APPS_PATH}/homepage/config:/app/config
     environment:
       - TZ=${TIMEZONE}
       - HOMEPAGE_ALLOWED_HOSTS={{ hms_docker_container_map['homepage']['proxy_host_rule'] | default('homepage') }}.${HMSD_DOMAIN},{{ ansible_default_ipv4.address }}:3000
+    {% if hmsdocker_container_enabled_socketproxy | default(false) %}
+      - DOCKER_HOST=tcp://socketproxy:2375
+    {% endif %}
     {% if hmsdocker_expose_ports_enabled_homepage %}
     ports:
       - 3000:3000
