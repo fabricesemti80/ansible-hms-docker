@@ -14,7 +14,11 @@ services:
       - CONTAINERS=1
       - SERVICES=1
       - TASKS=1
+    {% if socketproxy_expose_post | default(false) %}
+      - POST=1
+    {% else %}
       - POST=0
+    {% endif %}
     {% if socketproxy_expose_events | default(false) %}
       - EVENTS=1
     {% endif %}
@@ -29,6 +33,12 @@ services:
     {% endif %}
     {% if socketproxy_expose_volumes | default(false) %}
       - VOLUMES=1
+    {% endif %}
+    {% if socketproxy_expose_ping | default(false) %}
+      - PING=1
+    {% endif %}
+    {% if socketproxy_expose_version | default(false) %}
+      - VERSION=1
     {% endif %}
     {% if socketproxy_networks is defined %}
     networks:

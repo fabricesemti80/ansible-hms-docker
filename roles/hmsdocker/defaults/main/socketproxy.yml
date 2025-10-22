@@ -6,3 +6,6 @@ socketproxy_expose_info: no # default: `no` - expose Docker info API
 socketproxy_expose_images: no # default: `no` - expose Docker images API
 socketproxy_expose_networks: no # default: `no` - expose Docker networks API
 socketproxy_expose_volumes: no # default: `no` - expose Docker volumes API
+socketproxy_expose_ping: no # default: `no` - expose Docker ping API
+socketproxy_expose_version: no # default: `no` - expose Docker version API
+socketproxy_expose_post: no # default: `no` - expose Docker POST operations

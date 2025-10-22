@@ -112,6 +112,11 @@ services:
       driver: json-file
     networks:
       - authentik_net
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+      - proxy_net
+    depends_on:
+      - socketproxy
+    {% endif %}
     command: worker
     environment:
       AUTHENTIK_REDIS__HOST: authentik-redis
@@ -121,6 +126,9 @@ services:
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS:?database password required}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
       # AUTHENTIK_ERROR_REPORTING__ENABLED: "true"
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+      DOCKER_HOST: tcp://socketproxy:2375
+    {% endif %}
     # This is optional, and can be removed. If you remove this, the following will happen
     # - The permissions for the /media folders arent fixed, so make sure they are 1000:1000
     # - The docker socket cant be accessed anymore
@@ -128,7 +136,9 @@ services:
     volumes:
       - ${HMSD_APPS_PATH}/authentik/media:/media
       - ${HMSD_APPS_PATH}/authentik/certs:/certs
+    {% if not (hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false)) %}
       - /var/run/docker.sock:/var/run/docker.sock
+    {% endif %}
       - ${HMSD_APPS_PATH}/authentik/custom-templates:/templates
       - authentik_geoip:/geoip
 

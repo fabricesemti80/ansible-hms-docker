@@ -10,9 +10,15 @@ services:
       driver: json-file
     networks:
       - proxy_net
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+    depends_on:
+      - socketproxy
+    {% endif %}
     volumes:
       - ${HMSD_APPS_PATH}/uptimekuma/config:/app/data
+    {% if not (hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false)) %}
       - /var/run/docker.sock:/var/run/docker.sock
+    {% endif %}
     {% if hmsdocker_expose_ports_enabled_uptimekuma %}
     ports:
       - 3001:3001
@@ -21,6 +27,9 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TIMEZONE}
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+      - DOCKER_HOST=tcp://socketproxy:2375
+    {% endif %}
     {% if hmsdocker_traefik_enabled_uptimekuma %}
     labels:
       - traefik.enable=true

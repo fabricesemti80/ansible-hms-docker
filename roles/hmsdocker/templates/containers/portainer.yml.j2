@@ -2,7 +2,11 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+    command: -H tcp://socketproxy:2375
+    {% else %}
     command: -H unix:///var/run/docker.sock
+    {% endif %}
     restart: ${RESTART_POLICY}
     logging:
       options:
@@ -11,12 +15,18 @@ services:
       driver: json-file
     networks:
       - proxy_net
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+    depends_on:
+      - socketproxy
+    {% endif %}
     {% if hmsdocker_expose_ports_enabled_portainer %}
     ports:
       - 9000:9000
     {% endif %}
     volumes:
+    {% if not (hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false)) %}
       - /var/run/docker.sock:/var/run/docker.sock
+    {% endif %}
       - ${HMSD_APPS_PATH}/portainer/config:/data
     {% if hmsdocker_traefik_enabled_portainer or hmsdocker_homepage_enabled_portainer %}
     labels:
