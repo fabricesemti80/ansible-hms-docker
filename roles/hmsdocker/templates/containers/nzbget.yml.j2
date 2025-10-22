@@ -22,8 +22,13 @@ services:
     ports:
       - 6789:6789
     {% endif %}
-    {% if hmsdocker_traefik_enabled_nzbget or hmsdocker_homepage_enabled_nzbget %}
+    {% if hmsdocker_traefik_enabled_nzbget or hmsdocker_homepage_enabled_nzbget or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['nzbget']['proxy_host_rule'] | default('nzbget') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=6789
+      - dockpeek.tags=download,usenet,nzb
+      {% endif %}
       {% if hmsdocker_traefik_enabled_nzbget %}
       - traefik.enable=true
       - traefik.http.services.nzbget-${COMPOSE_PROJECT}.loadbalancer.server.port=6789

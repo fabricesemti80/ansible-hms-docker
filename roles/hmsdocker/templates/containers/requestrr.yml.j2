@@ -20,8 +20,14 @@ services:
     ports:
       - 4545:4545
     {% endif %}
-    {% if hmsdocker_traefik_enabled_requestrr %}
+    {% if hmsdocker_traefik_enabled_requestrr or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['requestrr']['proxy_host_rule'] | default('requestrr') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=4545
+      - dockpeek.tags=media,requests,discord-bot
+      {% endif %}
+      {% if hmsdocker_traefik_enabled_requestrr %}
       - traefik.enable=true
       - traefik.http.services.requestrr-${COMPOSE_PROJECT}.loadbalancer.server.port=4545
       - traefik.http.routers.requestrr-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['requestrr']['proxy_host_rule'] | default('requestrr') }}.${HMSD_DOMAIN}`)
@@ -31,4 +37,5 @@ services:
         {% if hmsdocker_authentik_enabled_requestrr %}
       - traefik.http.routers.requestrr-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-requestrr-midware@docker
         {% endif %}
+      {% endif %}
     {% endif %}

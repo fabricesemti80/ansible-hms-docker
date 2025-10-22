@@ -30,8 +30,14 @@ services:
     {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
       - DOCKER_HOST=tcp://socketproxy:2375
     {% endif %}
-    {% if hmsdocker_traefik_enabled_uptimekuma %}
+    {% if hmsdocker_traefik_enabled_uptimekuma or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['uptimekuma']['proxy_host_rule'] | default('uptime-kuma') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=3001
+      - dockpeek.tags=monitoring,uptime,alerts
+      {% endif %}
+      {% if hmsdocker_traefik_enabled_uptimekuma %}
       - traefik.enable=true
       - traefik.http.services.uptimekuma-${COMPOSE_PROJECT}.loadbalancer.server.port=3001
       - traefik.http.routers.uptimekuma-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['uptimekuma']['proxy_host_rule'] | default('uptime-kuma') }}.${HMSD_DOMAIN}`)
@@ -41,4 +47,5 @@ services:
         {% if hmsdocker_authentik_enabled_uptimekuma %}
       - traefik.http.routers.uptimekuma-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-uptimekuma-midware@docker
         {% endif %}
+      {% endif %}
     {% endif %}

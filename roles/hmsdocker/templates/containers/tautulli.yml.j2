@@ -14,8 +14,13 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TIMEZONE}
-    {% if hmsdocker_traefik_enabled_tautulli or hmsdocker_homepage_enabled_tautulli %}
+    {% if hmsdocker_traefik_enabled_tautulli or hmsdocker_homepage_enabled_tautulli or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['tautulli']['proxy_host_rule'] | default('tautulli') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=8181
+      - dockpeek.tags=media,analytics,plex-stats
+      {% endif %}
       {% if hmsdocker_traefik_enabled_tautulli %}
       - traefik.enable=true
       - traefik.http.services.tautulli-${COMPOSE_PROJECT}.loadbalancer.server.port=8181

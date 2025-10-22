@@ -20,8 +20,13 @@ services:
       - GENERIC_TIMEZONE=${TIMEZONE}
       - N8N_SECURE_COOKIE=false
       - N8N_METRICS=true
-    {% if hmsdocker_traefik_enabled_n8n or hmsdocker_homepage_enabled_n8n %}
+    {% if hmsdocker_traefik_enabled_n8n or hmsdocker_homepage_enabled_n8n or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['n8n']['proxy_host_rule'] | default('n8n') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=5678
+      - dockpeek.tags=automation,workflow,integration
+      {% endif %}
       {% if hmsdocker_traefik_enabled_n8n %}
       - traefik.enable=true
       - traefik.http.services.n8n-${COMPOSE_PROJECT}.loadbalancer.server.port=5678

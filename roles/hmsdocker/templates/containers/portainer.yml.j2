@@ -28,8 +28,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     {% endif %}
       - ${HMSD_APPS_PATH}/portainer/config:/data
-    {% if hmsdocker_traefik_enabled_portainer or hmsdocker_homepage_enabled_portainer %}
+    {% if hmsdocker_traefik_enabled_portainer or hmsdocker_homepage_enabled_portainer or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['portainer']['proxy_host_rule'] | default('portainer') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=9000
+      - dockpeek.tags=docker-management,infrastructure
+      {% endif %}
       {% if hmsdocker_traefik_enabled_portainer %}
       - traefik.enable=true
       - traefik.http.services.portainer-${COMPOSE_PROJECT}.loadbalancer.server.port=9000
