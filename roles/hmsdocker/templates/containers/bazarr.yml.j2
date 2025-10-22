@@ -21,8 +21,13 @@ services:
     volumes:
       - ${HMSD_APPS_PATH}/bazarr/config:/config
       - ${HMSD_MOUNT_PATH}:/data
-    {% if hmsdocker_traefik_enabled_bazarr or hmsdocker_homepage_enabled_bazarr %}
+    {% if hmsdocker_traefik_enabled_bazarr or hmsdocker_homepage_enabled_bazarr or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['bazarr']['proxy_host_rule'] | default('bazarr') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=6767
+      - dockpeek.tags=media,subtitles,*arr
+      {% endif %}
       {% if hmsdocker_traefik_enabled_bazarr %}
       - traefik.enable=true
       - traefik.http.services.bazarr-${COMPOSE_PROJECT}.loadbalancer.server.port=6767

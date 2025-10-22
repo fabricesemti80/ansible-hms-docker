@@ -29,8 +29,14 @@ services:
     ports:
       - 3000:3000
     {% endif %}
-    {% if hmsdocker_traefik_enabled_homepage %}
+    {% if hmsdocker_traefik_enabled_homepage or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['homepage']['proxy_host_rule'] | default('homepage') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=3000
+      - dockpeek.tags=dashboard,web-ui
+      {% endif %}
+      {% if hmsdocker_traefik_enabled_homepage %}
       - traefik.enable=true
       - traefik.http.services.homepage-${COMPOSE_PROJECT}.loadbalancer.server.port=3000
       - traefik.http.routers.homepage-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['homepage']['proxy_host_rule'] | default('homepage') }}.${HMSD_DOMAIN}`)
@@ -40,4 +46,5 @@ services:
         {% if hmsdocker_authentik_enabled_homepage %}
       - traefik.http.routers.homepage-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-homepage-midware@docker
         {% endif %}
+      {% endif %}
     {% endif %}

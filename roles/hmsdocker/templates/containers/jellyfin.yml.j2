@@ -33,8 +33,13 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
     runtime: nvidia
     {% endif %}
-    {% if hmsdocker_traefik_enabled_jellyfin or hmsdocker_homepage_enabled_jellyfin %}
+    {% if hmsdocker_traefik_enabled_jellyfin or hmsdocker_homepage_enabled_jellyfin or hmsdocker_container_enabled_dockpeek %}
     labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['jellyfin']['proxy_host_rule'] | default('jellyfin') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=8096
+      - dockpeek.tags=media,streaming,jellyfin
+      {% endif %}
       {% if hmsdocker_traefik_enabled_jellyfin %}
       - traefik.enable=true
       - traefik.http.services.jellyfin-${COMPOSE_PROJECT}.loadbalancer.server.port=8096
