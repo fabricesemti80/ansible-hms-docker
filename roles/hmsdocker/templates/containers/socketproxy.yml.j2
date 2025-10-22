@@ -40,6 +40,15 @@ services:
     {% if socketproxy_expose_version | default(false) %}
       - VERSION=1
     {% endif %}
+    {% if socketproxy_allow_start | default(false) %}
+      - ALLOW_START=1
+    {% endif %}
+    {% if socketproxy_allow_stop | default(false) %}
+      - ALLOW_STOP=1
+    {% endif %}
+    {% if socketproxy_allow_restarts | default(false) %}
+      - ALLOW_RESTARTS=1
+    {% endif %}
     {% if socketproxy_networks is defined %}
     networks:
       {% for network in socketproxy_networks %}

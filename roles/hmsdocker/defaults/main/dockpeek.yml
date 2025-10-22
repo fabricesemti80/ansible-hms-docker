@@ -1,0 +1,4 @@
+### Dockpeek Settings
+dockpeek_secret_key: your_secure_secret_key_change_me # default: change this to a secure random string
+dockpeek_username: admin # default: admin
+dockpeek_password: admin # default: admin - CHANGE THIS!

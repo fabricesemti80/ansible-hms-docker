@@ -9,3 +9,6 @@ socketproxy_expose_volumes: no # default: `no` - expose Docker volumes API
 socketproxy_expose_ping: no # default: `no` - expose Docker ping API
 socketproxy_expose_version: no # default: `no` - expose Docker version API
 socketproxy_expose_post: no # default: `no` - expose Docker POST operations
+socketproxy_allow_start: no # default: `no` - allow starting containers
+socketproxy_allow_stop: no # default: `no` - allow stopping containers
+socketproxy_allow_restarts: no # default: `no` - allow restarting containers

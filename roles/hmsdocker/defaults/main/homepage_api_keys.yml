@@ -7,7 +7,8 @@ homepage_nzbget_password:
 homepage_authentik_key: 
 
 # Portainer
-homepage_portainer_key: 
+homepage_portainer_key:
+homepage_portainer_env_id: 1 # default: 1 - Change this to match your Portainer environment ID 
 
 # Jellyfin
 homepage_jellyfin_key: 

@@ -1,0 +1,55 @@
+services:
+  dockpeek:
+    image: dockpeek/dockpeek:latest
+    container_name: dockpeek
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - proxy_net
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+    depends_on:
+      - socketproxy
+    {% endif %}
+    environment:
+      - SECRET_KEY=${DOCKPEEK_SECRET_KEY:-your_secure_secret_key}
+      - USERNAME=${DOCKPEEK_USERNAME:-admin}
+      - PASSWORD=${DOCKPEEK_PASSWORD:-admin}
+    {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+      - DOCKER_HOST=tcp://socketproxy:2375
+    {% endif %}
+    {% if not (hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false)) %}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    {% endif %}
+    {% if hmsdocker_expose_ports_enabled_dockpeek %}
+    ports:
+      - 3420:8000
+    {% endif %}
+    {% if hmsdocker_traefik_enabled_dockpeek or hmsdocker_homepage_enabled_dockpeek %}
+    labels:
+      {% if hmsdocker_traefik_enabled_dockpeek %}
+      - traefik.enable=true
+      - traefik.http.services.dockpeek-${COMPOSE_PROJECT}.loadbalancer.server.port=8000
+      - traefik.http.routers.dockpeek-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['dockpeek']['proxy_host_rule'] | default('dockpeek') }}.${HMSD_DOMAIN}`)
+        {% if not hmsdocker_expose_public_enabled_dockpeek %}
+      - traefik.http.routers.dockpeek-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
+        {% endif %}
+        {% if hmsdocker_authentik_enabled_dockpeek %}
+      - traefik.http.routers.dockpeek-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-dockpeek-midware@docker
+        {% endif %}
+      {% endif %}
+      {% if hmsdocker_homepage_enabled_dockpeek %}
+      - homepage.group=Infrastructure
+      - homepage.name=Dockpeek
+      - homepage.icon=docker.png
+      - homepage.href=http://{{ hms_docker_container_map['dockpeek']['proxy_host_rule'] | default('dockpeek') }}.${HMSD_DOMAIN}
+      - homepage.description=Docker Management
+        {% if hmsdocker_homepage_stats_enabled_dockpeek %}
+      - homepage.showStats=true
+        {% endif %}
+      {% endif %}
+    {% endif %}
