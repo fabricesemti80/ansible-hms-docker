@@ -41,6 +41,9 @@ check: install-reqs
 apply: install-reqs
 	@ansible-playbook -i inventory/hosts.yml hms-docker.yml --diff
 
+verbose: install-reqs
+	@ansible-playbook -i inventory/hosts.yml hms-docker.yml --diff -vv
+
 install-reqs:
 	@ansible-galaxy install -r galaxy-requirements.yml -p ./galaxy-roles
 

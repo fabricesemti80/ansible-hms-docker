@@ -1,0 +1,143 @@
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - proxy_net
+      - immich_net
+    command: ['start.sh', 'immich']
+    volumes:
+      - ${HMSD_APPS_PATH}/immich/upload:/usr/src/app/upload
+      - ${HMSD_MOUNT_PATH}:/data
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - DB_HOSTNAME=immich_postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=${IMMICH_DB_PASSWORD:-postgres}
+      - DB_DATABASE_NAME=immich
+      - REDIS_HOSTNAME=immich_redis
+      - TZ=${TIMEZONE}
+    depends_on:
+      - immich-redis
+      - immich-database
+    {% if hmsdocker_traefik_enabled_immich or hmsdocker_homepage_enabled_immich or hmsdocker_container_enabled_dockpeek %}
+    labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['immich']['proxy_host_rule'] | default('immich') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=2283
+      - dockpeek.tags=media,photos,immich
+      {% endif %}
+      {% if hmsdocker_traefik_enabled_immich %}
+      - traefik.enable=true
+      - traefik.http.services.immich-${COMPOSE_PROJECT}.loadbalancer.server.port=2283
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['immich']['proxy_host_rule'] | default('immich') }}.${HMSD_DOMAIN}`)
+        {% if not hmsdocker_expose_public_enabled_immich %}
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
+        {% endif %}
+        {% if hmsdocker_authentik_enabled_immich %}
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-immich-midware@docker
+        {% endif %}
+      {% endif %}
+      {% if hmsdocker_homepage_enabled_immich %}
+      - homepage.group=Media
+      - homepage.name=Immich
+      - homepage.icon=immich.png
+      - homepage.href=http://{{ hms_docker_container_map['immich']['proxy_host_rule'] | default('immich') }}.${HMSD_DOMAIN}
+      - homepage.description=Photo & Video Management
+      - homepage.widget.type=immich
+      - homepage.widget.url=http://immich-server:2283
+      - homepage.widget.key=${IMMICH_API_KEY:-apikeyapikeyapikey}
+        {% if hmsdocker_homepage_stats_enabled_immich %}
+      - homepage.showStats=true
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    {% if hmsdocker_expose_ports_enabled_immich %}
+    ports:
+      - 2283:2283
+    {% endif %}
+
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - immich_net
+    command: ['start.sh', 'microservices']
+    volumes:
+      - ${HMSD_APPS_PATH}/immich/upload:/usr/src/app/upload
+      - ${HMSD_MOUNT_PATH}:/data
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - DB_HOSTNAME=immich_postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=${IMMICH_DB_PASSWORD:-postgres}
+      - DB_DATABASE_NAME=immich
+      - REDIS_HOSTNAME=immich_redis
+      - TZ=${TIMEZONE}
+    depends_on:
+      - immich-redis
+      - immich-database
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - immich_net
+    volumes:
+      - ${HMSD_APPS_PATH}/immich/model-cache:/cache
+    environment:
+      - TZ=${TIMEZONE}
+
+  immich-redis:
+    container_name: immich_redis
+    image: redis:6.2-alpine
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - immich_net
+
+  immich-database:
+    container_name: immich_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - immich_net
+    environment:
+      - POSTGRES_PASSWORD=${IMMICH_DB_PASSWORD:-postgres}
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=immich
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${HMSD_APPS_PATH}/immich/postgres:/var/lib/postgresql/data
+
+networks:
+  immich_net:
+    driver: bridge
+    attachable: true

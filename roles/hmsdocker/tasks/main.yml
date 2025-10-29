@@ -6,48 +6,48 @@
 - name: Build facts of enabled containers to slim play output
   ansible.builtin.set_fact:
     enabled_containers: >-
-          {{
-            hms_docker_container_map | dict2items | 
-            selectattr('value.enabled', 'defined') |
-            selectattr('value.enabled', 'equalto', true) |
-            map(attribute='key') |
-            list
-          }}
+      {{
+        hms_docker_container_map | dict2items | 
+        selectattr('value.enabled', 'defined') |
+        selectattr('value.enabled', 'equalto', true) |
+        map(attribute='key') |
+        list
+      }}
     enabled_containers_config_dirs: >-
-          {{
-            hms_docker_container_map | dict2items | 
-            selectattr('value.enabled', 'defined') |
-            selectattr('value.enabled', 'equalto', true) |
-            selectattr('value.directory', 'defined') |
-            selectattr('value.directory', 'equalto', true) |
-            map(attribute='key') |
-            list
-          }}
+      {{
+        hms_docker_container_map | dict2items | 
+        selectattr('value.enabled', 'defined') |
+        selectattr('value.enabled', 'equalto', true) |
+        selectattr('value.directory', 'defined') |
+        selectattr('value.directory', 'equalto', true) |
+        map(attribute='key') |
+        list
+      }}
     traefik_enabled_subdomains: >-
-          {{
-            hms_docker_container_map | dict2items | 
-            selectattr('value.enabled', 'defined') |
-            selectattr('value.enabled', 'equalto', true) |
-            selectattr('value.traefik', 'defined') |
-            selectattr('value.traefik', 'equalto', true) |
-            map(attribute='value.proxy_host_rule') |
-            list
-          }}
+      {{
+        hms_docker_container_map | dict2items | 
+        selectattr('value.enabled', 'defined') |
+        selectattr('value.enabled', 'equalto', true) |
+        selectattr('value.traefik', 'defined') |
+        selectattr('value.traefik', 'equalto', true) |
+        map(attribute='value.proxy_host_rule') |
+        list
+      }}
     traefik_enabled_external_hosts: >-
-          {{
-            traefik_ext_hosts_list | json_query('[?enabled==true].subdomain_name')
-          }}
+      {{
+        traefik_ext_hosts_list | json_query('[?enabled==true].subdomain_name')
+      }}
     filtered_authentik_items: >-
-          {{
-            hms_docker_container_map | dict2items |
-            selectattr('value.enabled', 'defined') |
-            selectattr('value.enabled', 'equalto', true) |
-            selectattr('value.traefik', 'defined') |
-            selectattr('value.traefik', 'equalto', true) |
-            selectattr('value.authentik', 'defined') |
-            selectattr('value.authentik', 'equalto', true) |
-            selectattr('value.proxy_host_rule', 'defined')
-          }}
+      {{
+        hms_docker_container_map | dict2items |
+        selectattr('value.enabled', 'defined') |
+        selectattr('value.enabled', 'equalto', true) |
+        selectattr('value.traefik', 'defined') |
+        selectattr('value.traefik', 'equalto', true) |
+        selectattr('value.authentik', 'defined') |
+        selectattr('value.authentik', 'equalto', true) |
+        selectattr('value.proxy_host_rule', 'defined')
+      }}
 
 - name: Set authentik proxy enabled containers list
   ansible.builtin.set_fact:
@@ -127,7 +127,7 @@
   loop:
     - sonarr
     - radarr
-  when: 
+  when:
     - separate_4k_instances_enable | default(false)
 
 - name: Ensure Authentik
@@ -136,7 +136,7 @@
 
 - name: Run container prereqs if available
   ansible.builtin.include_tasks: "container_prereqs/{{ container_task_name }}.yml"
-  loop: '{{ container_prereqs }}'
+  loop: "{{ container_prereqs }}"
   loop_control:
     loop_var: container_task_name
 
@@ -145,7 +145,7 @@
 
 - name: Run Youtube downloader initialization tasks
   ansible.builtin.import_tasks: "youtube_downloaders.yml"
-  
+
 - name: Retrieve app API keys if available
   ansible.builtin.import_tasks: "app_api_key_reader.yml"
   when: hmsdocker_container_enabled_homepage
@@ -176,10 +176,11 @@
     bazarr_key: "{{ slurped_api_key_bazarr['content'] | b64decode | from_yaml }}"
     overseerr_key: "{{ slurped_api_key_overseerr['content'] | b64decode | from_json }}"
     tautulli_key: "{{ slurped_api_key_tautulli['content'] | b64decode | regex_search('(?<=api_key = )\\w*') | default('') }}"
-    plex_key: "{{ slurped_api_key_plex['content'] | b64decode | regex_search('(?<=PlexOnlineToken=\")(.*?)(?=\")') | default('') }}"
+    plex_key: '{{ slurped_api_key_plex[''content''] | b64decode | regex_search(''(?<=PlexOnlineToken=")(.*?)(?=")'') | default('''') }}'
     sabnzbd_key: "{{ slurped_api_key_sabnzbd['content'] | b64decode | regex_search('(?<=api_key = )\\w*') | default('') }}"
     readarr_key: "{{ slurped_api_key_readarr['content'] | b64decode | regex_search(arr_apikey) | default('') }}"
     lidarr_key: "{{ slurped_api_key_lidarr['content'] | b64decode | regex_search(arr_apikey) | default('') }}"
+    immich_key: "{{ (slurped_api_key_immich['content'] | b64decode) if slurped_api_key_immich is defined else (homepage_immich_key | default('')) }}"
 
 - name: Ensure compose_files directory exists
   ansible.builtin.file:
@@ -193,7 +194,7 @@
 - name: Ensure App Compose Files that are not in map
   ansible.builtin.import_tasks: "generate_compose_files.yml"
 
-- name: Generate Docker Compose files for enabled containers 
+- name: Generate Docker Compose files for enabled containers
   ansible.builtin.template:
     src: containers/{{ item }}.yml.j2
     dest: "{{ compose_dir.dest | default(hms_docker_data_path + '/compose_files') }}/{{ item }}.yml"
@@ -222,9 +223,18 @@
     project_name: "{{ project_name }}"
     state: "{{ hms_docker_compose_container_state }}"
     remove_orphans: "{{ container_remove_orphans }}"
+    timeout: 300
     # env_file: "{{ compose_env.dest }}" # Commented out since this module defaults to using the .env file within the project_src location, but leaving just in case advanced users wish to point to a different location
+  register: docker_compose_result
   when:
     - not ansible_check_mode
+
+- name: Debug Docker Compose result
+  ansible.builtin.debug:
+    var: docker_compose_result
+  when:
+    - not ansible_check_mode
+    - docker_compose_result is defined
 
 - name: Ensure custom scripts
   ansible.builtin.import_tasks: "scripts.yml"
@@ -232,7 +242,7 @@
 
 - name: Run container postreqs if available
   ansible.builtin.include_tasks: "tasks/container_postreqs/{{ container_task_name }}.yml"
-  loop: '{{ container_postreqs }}'
+  loop: "{{ container_postreqs }}"
   loop_control:
     loop_var: container_task_name
 

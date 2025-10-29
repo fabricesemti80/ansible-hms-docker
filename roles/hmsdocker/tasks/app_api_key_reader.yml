@@ -163,3 +163,14 @@
         src: "{{ lidarr_conf_path.stat.path }}"
       register: slurped_api_key_lidarr
       when: lidarr_conf_path.stat.exists
+
+- name: Handle Immich config
+  when: hmsdocker_container_enabled_immich
+  block:
+    # Note: Immich API keys are stored in the database and must be created manually
+    # This is a placeholder for future implementation or manual key configuration
+    - name: Set default Immich API key
+      ansible.builtin.set_fact:
+        slurped_api_key_immich:
+          content: "{{ (homepage_immich_key | default('')) | b64encode }}"
+      when: homepage_immich_key is defined

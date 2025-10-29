@@ -53,6 +53,7 @@ hmsdocker_container_enabled_pinchflat: "{{ hms_docker_container_map['pinchflat']
 hmsdocker_container_enabled_checkrr: "{{ hms_docker_container_map['checkrr']['enabled'] | default(False) }}"
 hmsdocker_container_enabled_n8n: "{{ hms_docker_container_map['n8n']['enabled'] | default(False) }}"
 hmsdocker_container_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['enabled'] | default(False) }}"
+hmsdocker_container_enabled_immich: "{{ hms_docker_container_map['immich']['enabled'] | default(False) }}"
 
 # Traefik computed variables
 # Controls if Traefik is enabled for a container
@@ -96,6 +97,7 @@ hmsdocker_traefik_enabled_pinchflat: "{{ hms_docker_container_map['pinchflat']['
 hmsdocker_traefik_enabled_checkrr: "{{ hms_docker_container_map['checkrr']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
 hmsdocker_traefik_enabled_n8n: "{{ hms_docker_container_map['n8n']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
 hmsdocker_traefik_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
+hmsdocker_traefik_enabled_immich: "{{ hms_docker_container_map['immich']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
 
 # Public container exposure computed variables
 # Controls Traefik rules to allow/disallow accessing the containers from the public internet via an allowlist
@@ -138,6 +140,7 @@ hmsdocker_expose_public_enabled_pinchflat: "{{ hms_docker_container_map['pinchfl
 hmsdocker_expose_public_enabled_checkrr: "{{ hms_docker_container_map['checkrr']['expose_to_public'] | default(False) }}"
 hmsdocker_expose_public_enabled_n8n: "{{ hms_docker_container_map['n8n']['expose_to_public'] | default(False) }}"
 hmsdocker_expose_public_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['expose_to_public'] | default(False) }}"
+hmsdocker_expose_public_enabled_immich: "{{ hms_docker_container_map['immich']['expose_to_public'] | default(False) }}"
 
 # Container host port mapping computed variables
 # Controls if the container "exposes" its ports on the host
@@ -181,6 +184,7 @@ hmsdocker_expose_ports_enabled_pinchflat: "{{ True if (container_expose_ports or
 hmsdocker_expose_ports_enabled_checkrr: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_checkrr) else False }}"
 hmsdocker_expose_ports_enabled_n8n: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_n8n) else False }}"
 hmsdocker_expose_ports_enabled_dockpeek: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_dockpeek) else False }}"
+hmsdocker_expose_ports_enabled_immich: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_immich) else False }}"
 
 # Authentik computed variables
 # Controls global authentik variables
@@ -228,6 +232,7 @@ hmsdocker_authentik_enabled_pinchflat: "{{ hms_docker_container_map['pinchflat']
 hmsdocker_authentik_enabled_checkrr: "{{ hms_docker_container_map['checkrr']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['checkrr']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 hmsdocker_authentik_enabled_n8n: "{{ hms_docker_container_map['n8n']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['n8n']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 hmsdocker_authentik_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['dockpeek']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
+hmsdocker_authentik_enabled_immich: "{{ hms_docker_container_map['immich']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['immich']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 
 # Homepage
 # Controls if the integration with Homepage is enabled for a container
@@ -259,6 +264,7 @@ hmsdocker_homepage_enabled_pinchflat: "{{ hmsdocker_container_enabled_homepage a
 hmsdocker_homepage_enabled_checkrr: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['checkrr']['homepage'] | default(False) }}"
 hmsdocker_homepage_enabled_n8n: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['n8n']['homepage'] | default(False) }}"
 hmsdocker_homepage_enabled_dockpeek: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['dockpeek']['homepage'] | default(False) }}"
+hmsdocker_homepage_enabled_immich: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['immich']['homepage'] | default(False) }}"
 
 # Controls if the container should show stats (CPU, RAM, RX, TX) on Homepage
 hmsdocker_homepage_stats_enabled_traefik: "{{ hmsdocker_homepage_enabled_traefik and hms_docker_container_map['traefik']['homepage_stats'] | default(False) }}"
@@ -289,6 +295,7 @@ hmsdocker_homepage_stats_enabled_pinchflat: "{{ hmsdocker_homepage_enabled_pinch
 hmsdocker_homepage_stats_enabled_checkrr: "{{ hmsdocker_homepage_enabled_checkrr and hms_docker_container_map['checkrr']['homepage_stats'] | default(False) }}"
 hmsdocker_homepage_stats_enabled_n8n: "{{ hmsdocker_homepage_enabled_n8n and hms_docker_container_map['n8n']['homepage_stats'] | default(False) }}"
 hmsdocker_homepage_stats_enabled_dockpeek: "{{ hmsdocker_homepage_enabled_dockpeek and hms_docker_container_map['dockpeek']['homepage_stats'] | default(False) }}"
+hmsdocker_homepage_stats_enabled_immich: "{{ hmsdocker_homepage_enabled_immich and hms_docker_container_map['immich']['homepage_stats'] | default(False) }}"
 
 #######################################################################
 
