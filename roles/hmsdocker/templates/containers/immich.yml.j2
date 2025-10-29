@@ -13,8 +13,9 @@ services:
       - immich_net
     command: ['start.sh', 'immich']
     volumes:
-      - ${HMSD_APPS_PATH}/immich/upload:/usr/src/app/upload
+      - ${HMSD_MOUNT_PATH}/media/immich-upload:/usr/src/app/upload
       - ${HMSD_MOUNT_PATH}:/data
+      - ${HMSD_MOUNT_PATH}/media/photos:/usr/src/app/external:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
       - DB_HOSTNAME=immich_postgres
@@ -76,8 +77,9 @@ services:
       - immich_net
     command: ['start.sh', 'microservices']
     volumes:
-      - ${HMSD_APPS_PATH}/immich/upload:/usr/src/app/upload
+      - ${HMSD_MOUNT_PATH}/media/immich-upload:/usr/src/app/upload
       - ${HMSD_MOUNT_PATH}:/data
+      - ${HMSD_MOUNT_PATH}/media/photos:/usr/src/app/external:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
       - DB_HOSTNAME=immich_postgres
