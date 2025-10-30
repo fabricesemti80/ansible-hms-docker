@@ -37,7 +37,10 @@ services:
       {% if hmsdocker_traefik_enabled_immich %}
       - traefik.enable=true
       - traefik.http.services.immich-${COMPOSE_PROJECT}.loadbalancer.server.port=2283
+      - traefik.http.services.immich-${COMPOSE_PROJECT}.loadbalancer.server.scheme=http
+      - traefik.http.services.immich-${COMPOSE_PROJECT}.loadbalancer.healthcheck.timeout=30s
       - traefik.http.routers.immich-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['immich']['proxy_host_rule'] | default('immich') }}.${HMSD_DOMAIN}`)
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.entrypoints=web
         {% if not hmsdocker_expose_public_enabled_immich %}
       - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
         {% endif %}
@@ -59,10 +62,8 @@ services:
         {% endif %}
       {% endif %}
     {% endif %}
-    {% if hmsdocker_expose_ports_enabled_immich %}
     ports:
       - 2283:2283
-    {% endif %}
 
   immich-microservices:
     container_name: immich_microservices

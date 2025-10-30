@@ -27,7 +27,7 @@ container_gid: 1234
 
 # This will expose each containers individual ports on the host (check the README for more info on which ports map to which containers) // default: "no"
 # If you disable traefik within the container map, the playbook will automatically override this setting and expose the ports
-container_expose_ports: no
+container_expose_ports: yes
 
 ### Immich settings
 # Immich version to use // default: "release"
