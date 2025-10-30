@@ -34,4 +34,5 @@ container_expose_ports: yes
 hmsdocker_immich_version: release
 
 # Immich database password // default: "postgres"
-hmsdocker_immich_db_password: fb3c4575f4ca6f7c2b69825050ca7e752c3fcd2cc1470858cea28389c978d572
+hmsdocker_immich_db_password: postgres
+
