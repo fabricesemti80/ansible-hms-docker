@@ -55,8 +55,10 @@ services:
       - homepage.href=http://{{ hms_docker_container_map['immich']['proxy_host_rule'] | default('immich') }}.${HMSD_DOMAIN}
       - homepage.description=Photo & Video Management
       - homepage.widget.type=immich
-      - homepage.widget.url=http://immich-server:2283
+      - homepage.widget.url=http://immich_server:2283
       - homepage.widget.key=${IMMICH_API_KEY:-apikeyapikeyapikey}
+      - homepage.widget.version=2
+
         {% if hmsdocker_homepage_stats_enabled_immich %}
       - homepage.showStats=true
         {% endif %}
