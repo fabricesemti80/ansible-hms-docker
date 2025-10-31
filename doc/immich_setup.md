@@ -14,6 +14,16 @@ Immich is a high-performance self-hosted photo and video management solution.
    - `hmsdocker_immich_version`: Immich version to use (default: "release")
    - `hmsdocker_immich_db_password`: Database password (default: "postgres")
 
+## Upload File Size Limits
+
+The Immich setup includes configurations to handle large file uploads:
+
+- **Traefik Middleware**: A `large-upload` middleware is automatically applied to remove upload size limits
+- **Unlimited Upload Size**: The configuration sets `maxRequestBodyBytes: 0` which removes file size restrictions
+- **Memory Buffering**: Uses 2MB memory buffers for efficient handling of large files
+
+This allows you to upload large video files and high-resolution photos without size restrictions.
+
 3. **Set up API Key for Homepage Integration**:
    - After Immich is running, log into the web interface
    - Go to Account Settings → API Keys

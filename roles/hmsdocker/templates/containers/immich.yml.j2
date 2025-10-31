@@ -24,6 +24,9 @@ services:
       - DB_DATABASE_NAME=immich
       - REDIS_HOSTNAME=immich_redis
       - TZ=${TIMEZONE}
+      # Upload configuration - remove size limits
+      - UPLOAD_LOCATION=/usr/src/app/upload
+      - IMMICH_WORKERS_INCLUDE=api
     depends_on:
       - immich-redis
       - immich-database
@@ -41,11 +44,14 @@ services:
       - traefik.http.services.immich-${COMPOSE_PROJECT}.loadbalancer.healthcheck.timeout=30s
       - traefik.http.routers.immich-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['immich']['proxy_host_rule'] | default('immich') }}.${HMSD_DOMAIN}`)
       - traefik.http.routers.immich-${COMPOSE_PROJECT}.entrypoints=web
-        {% if not hmsdocker_expose_public_enabled_immich %}
-      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
-        {% endif %}
-        {% if hmsdocker_authentik_enabled_immich %}
-      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-immich-midware@docker
+        {% if not hmsdocker_expose_public_enabled_immich and hmsdocker_authentik_enabled_immich %}
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file,large-upload@file,authentik-proxy-${COMPOSE_PROJECT}-immich-midware@docker
+        {% elif not hmsdocker_expose_public_enabled_immich %}
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file,large-upload@file
+        {% elif hmsdocker_authentik_enabled_immich %}
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=large-upload@file,authentik-proxy-${COMPOSE_PROJECT}-immich-midware@docker
+        {% else %}
+      - traefik.http.routers.immich-${COMPOSE_PROJECT}.middlewares=large-upload@file
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_immich %}
