@@ -11,10 +11,3 @@ http:
             ipAllowList:
                 sourceRange:
                     - "0.0.0.0/0"
-        large-upload:
-            buffering:
-                maxRequestBodyBytes: 0  # 0 = unlimited
-                memRequestBodyBytes: 2097152  # 2MB in memory buffer
-                maxResponseBodyBytes: 0  # 0 = unlimited
-                memResponseBodyBytes: 2097152  # 2MB in memory buffer
-                retryExpression: "IsNetworkError() && Attempts() <= 2"
