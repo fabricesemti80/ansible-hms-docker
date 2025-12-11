@@ -13,6 +13,7 @@
     debug_mode: false
 
   roles:
+    - set_hostname
     - galaxy-roles/geerlingguy.docker
 
   tasks:

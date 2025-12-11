@@ -1,0 +1,14 @@
+---
+- name: Set hostname to the Ansible host name
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+  when: inventory_hostname is defined
+
+- name: Reboot the system to apply the hostname change
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible to apply hostname change"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+  when: inventory_hostname is defined
