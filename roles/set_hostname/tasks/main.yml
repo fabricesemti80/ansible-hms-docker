@@ -3,6 +3,7 @@
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
   when: inventory_hostname is defined
+  register: hostname_result
 
 - name: Reboot the system to apply the hostname change
   ansible.builtin.reboot:
@@ -11,4 +12,4 @@
     reboot_timeout: 600
     pre_reboot_delay: 0
     post_reboot_delay: 30
-  when: inventory_hostname is defined
+  when: inventory_hostname is defined and hostname_result.changed

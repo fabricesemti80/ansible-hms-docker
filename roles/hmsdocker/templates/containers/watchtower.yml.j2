@@ -12,12 +12,15 @@ services:
     command: "--schedule '{{ container_auto_update_schedule }}' --cleanup --notifications 'slack' --notification-slack-hook-url '{{ watchtower_webhook }}' --notification-slack-identifier '{{ ansible_hostname }}'"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_API_VERSION=1.49
+      {% if hmsdocker_container_enabled_homepage %}
+      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_KEY}
+      - WATCHTOWER_HTTP_API_METRICS=true
+      {% endif %}
     {% if hmsdocker_container_enabled_homepage %}
     networks:
       - proxy_net
-    environment:
-      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_KEY}
-      - WATCHTOWER_HTTP_API_METRICS=true
     labels:
       - homepage.group=Infrastructure
       - homepage.name=Watchtower
