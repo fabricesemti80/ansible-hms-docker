@@ -17,6 +17,7 @@ services:
       - /dev/net/tun:/dev/net/tun
     environment:
       - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
+      - TS_HOSTNAME=${HOSTNAME}
     {% if tailscale_enable_subnet_routes %}
       - TS_ROUTES={{ tailscale_subnet_routes }}
     {% endif %}
