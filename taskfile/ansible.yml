@@ -1,0 +1,65 @@
+version: '3'
+
+tasks:
+  init:
+    desc: "Install Ansible Galaxy roles and collections"
+    cmds:
+      - doppler run -- ansible-galaxy install -r galaxy-requirements.yml -p ./galaxy-roles
+
+  plan:
+    desc: "Plan the configuration (dry-run)"
+    cmds:
+      - task: init
+      - doppler run -- ansible-playbook hms-docker.yml --diff --check
+
+  apply:
+    desc: "Apply the configuration"
+    cmds:
+      - task: init
+      - doppler run -- ansible-playbook hms-docker.yml --diff {{.CLI_ARGS}}
+
+  verbose:
+    desc: "Apply the configuration with verbose output"
+    cmds:
+      - task: apply -- -vv
+
+  config:
+    desc: "Copy default config files"
+    vars:
+      CUSTOM_CONF_DIR: inventory/group_vars/all
+      ADVANCED_CONFS: roles/hmsdocker/defaults/main/*.yml
+    cmds:
+      - |
+        echo "⚠ This will overwrite all existing files in '{{.CUSTOM_CONF_DIR}}', are you sure? [y/n] "
+        read -r REPLY
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+          echo "Stopping"
+          exit 1
+        else
+          echo "Copying files..."
+          mkdir -p {{.CUSTOM_CONF_DIR}}
+          cp {{.ADVANCED_CONFS}} {{.CUSTOM_CONF_DIR}}
+          chmod 0600 {{.CUSTOM_CONF_DIR}}/*.yml
+        fi
+    interactive: true
+
+  update:
+    desc: "Update from git and migrate variables"
+    vars:
+      CUSTOM_CONF_DIR: inventory/group_vars/all
+    cmds:
+      - echo "Updating from Git repo..." && git pull
+      - echo "Updating variable names"
+      - "sed -i 's/traefik_ext_hosts_configs_path:/hmsdocker_traefik_static_config_location:/g' {{.CUSTOM_CONF_DIR}}/traefik.yml"
+      - "sed -i 's/hms_docker_library_path/hmsdocker_library_path/g' {{.CUSTOM_CONF_DIR}}/hmsd_advanced.yml"
+      - "sed -i 's/transmission_vpn_provider:/hmsdocker_vpn_provider:/g' {{.CUSTOM_CONF_DIR}}/transmission.yml"
+      - "sed -i 's/transmission_vpn_user:/hmsdocker_vpn_user:/g' {{.CUSTOM_CONF_DIR}}/transmission.yml"
+      - "sed -i 's/transmission_vpn_pass:/hmsdocker_vpn_pass:/g' {{.CUSTOM_CONF_DIR}}/transmission.yml"
+      - "sed -i 's/transmission_ovpn_config_local_path:/transmission_ovpn_config_local_dir:/g' {{.CUSTOM_CONF_DIR}}/transmission.yml"
+      - "grep -q '^hmsdocker_vpn_type:' {{.CUSTOM_CONF_DIR}}/vpn.yml || echo \"hmsdocker_vpn_type: ''\" >> {{.CUSTOM_CONF_DIR}}/vpn.yml"
+      - echo "Update finished"
+
+  verify:
+    desc: "Check containers exposed ports"
+    cmds:
+      - sudo python3 .github/workflows/scripts/check_containers.py

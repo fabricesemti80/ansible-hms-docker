@@ -1,0 +1,18 @@
+# https://taskfile.dev
+
+version: '3'
+
+# Global variables available to all tasks
+vars:
+  DOPPLER_PROJECT: "ansible-hms-docker"
+  DOPPLER_CONFIG: "dev"
+
+includes:
+  tf: ./taskfile/terraform.yml
+  ansible: ./taskfile/ansible.yml
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true

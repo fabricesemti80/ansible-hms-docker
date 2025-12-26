@@ -1,0 +1,36 @@
+version: '3'
+
+tasks:
+
+  fmt:
+    desc: "Format and validate Terraform configuration"
+    dir: terraform
+    cmds:
+      - doppler run -- terraform fmt
+      - doppler run -- terraform validate
+
+  init:
+    desc: "Initialize Terraform"
+    dir: terraform
+    cmds:
+      - doppler run -- terraform init {{.CLI_ARGS}}
+
+  plan:
+    desc: "Create a Terraform execution plan"
+    dir: terraform
+    cmds:
+      - task: fmt
+      - doppler run -- terraform plan -out=tfplan
+
+  apply:
+    desc: "Apply the Terraform plan"
+    dir: terraform
+    cmds:
+      - task: plan
+      - doppler run -- terraform apply tfplan
+
+  destroy:
+    desc: "Destroy the Terraform-managed infrastructure"
+    dir: terraform
+    cmds:
+      - doppler run -- terraform destroy -auto-approve
