@@ -33,6 +33,20 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
     runtime: nvidia
     {% endif %}
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          memory: 2G
+    {% if hmsdocker_expose_ports_enabled_jellyfin %}
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
+      - 7359:7359/udp #optional
+    {% endif %}
     {% if hmsdocker_traefik_enabled_jellyfin or hmsdocker_homepage_enabled_jellyfin or hmsdocker_container_enabled_dockpeek %}
     labels:
       {% if hmsdocker_container_enabled_dockpeek %}
