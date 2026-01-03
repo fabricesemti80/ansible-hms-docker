@@ -16,7 +16,7 @@ locals {
   vm_common = {
     description    = "Terraform Managed Docker Media VM"
     tags           = ["media", "debian13", "docker", "terraform"]
-    node_name      = "pve-2"
+    node_name      = "pve-1"
     template_vm_id = 9008
     full_clone     = true
 
