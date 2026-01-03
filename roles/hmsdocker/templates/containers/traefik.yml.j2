@@ -13,10 +13,14 @@ services:
       - 443:443
       - 8080:8080
     environment:
-      - TZ=${TIMEZONE}
       - PUID=${PUID}
       - PGID=${PGID}
-    {% if traefik_ssl_dns_provider_environment_vars %}
+      - TZ=${TIMEZONE}
+      - DOCKER_API_VERSION=1.44
+      {% if hmsdocker_container_enabled_socketproxy | default(false) and socketproxy_expose_events | default(false) and socketproxy_expose_info | default(false) %}
+      - DOCKER_HOST=tcp://socketproxy:2375
+      {% endif %}
+    {% if hmsdocker_traefik_enabled_traefik or hmsdocker_homepage_enabled_traefik %}
         {% for key, value in traefik_ssl_dns_provider_environment_vars.items() %}
         {# Due to how Ansible interprets curly brackets, I had to use 'raw' statements in order to render the ${} around the ansible 'key' variable to reference the .env file variable #}
       - {{ key }}={% raw %}${{% endraw %}{{ key }}{% raw %}}{% endraw +%}

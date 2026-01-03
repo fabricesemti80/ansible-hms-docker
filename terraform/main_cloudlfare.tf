@@ -31,9 +31,27 @@ data "cloudflare_zone" "media_zone" {
 resource "cloudflare_record" "wildcard" {
   zone_id = data.cloudflare_zone.media_zone.id
   name    = "*"
-  value   = "${cloudflare_zero_trust_tunnel_cloudflared.media_tunnel.id}.cfargotunnel.com"
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.media_tunnel.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
+}
+
+# 3. Configure Tunnel Ingress Rules (Route to Traefik)
+resource "cloudflare_zero_trust_tunnel_cloudflared_config" "media_tunnel_config" {
+  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.media_tunnel.id
+
+  config {
+    ingress_rule {
+      hostname = "*.${local.media_domain}"
+      service  = "http://traefik:80"
+    }
+
+    # Required catch-all rule
+    ingress_rule {
+      service = "http_status:404"
+    }
+  }
 }
 
 # Access Policy (Optional: If you want to protect the wildcard or specific subdomains)
