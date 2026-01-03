@@ -14,7 +14,9 @@
 
   roles:
     - set_hostname
-    - galaxy-roles/geerlingguy.docker
+    - role: galaxy-roles/geerlingguy.docker
+      vars:
+        docker_packages: []
 
   tasks:
     - name: Ensure Nvidia GPU role if enabled

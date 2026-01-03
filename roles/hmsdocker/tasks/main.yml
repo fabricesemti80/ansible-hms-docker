@@ -91,6 +91,18 @@
     - "{{ hms_docker_mount_path }}"
   when: item is defined and item != ''
 
+- name: Ensure QEMU Guest Agent is installed and running
+  ansible.builtin.package:
+    name: qemu-guest-agent
+    state: present
+  register: qemu_agent_install
+
+- name: Ensure QEMU Guest Agent is started and enabled
+  ansible.builtin.service:
+    name: qemu-guest-agent
+    state: started
+    enabled: yes
+
 - name: NAS base configuration tasks.
   ansible.builtin.include_tasks: "nas/nas_{{ hms_docker_media_share_type | lower }}.yml"
 

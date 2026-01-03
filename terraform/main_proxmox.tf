@@ -21,7 +21,7 @@ locals {
     full_clone     = true
 
     # Agent Configuration
-    agent_enabled = false
+    agent_enabled = true
     agent_timeout = "5m"
 
     # Hardware Configuration
@@ -32,7 +32,7 @@ locals {
     # Disk Configuration
     disk_datastore_id = "ceph-proxmox-rbd"
     disk_interface    = "virtio0"
-    disk_size         = 32
+    disk_size         = 40
     disk_iothread     = true
 
     # Network Configuration
