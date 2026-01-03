@@ -54,11 +54,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "media_tunnel_config"
   }
 }
 
-# Access Policy (Optional: If you want to protect the wildcard or specific subdomains)
-# Note: Cloudflare Access is usually applied per-application (subdomain). 
-# Creating a general policy for the whole zone might be aggressive.
-# Assuming the user wants to protect the exposed services.
+# 4. Cloudflare Access Applications & Policies
 
+# --- Wildcard Application (Default: Protected) ---
+# Protects all subdomains by default (*.domain.com) requiring email authentication.
 resource "cloudflare_zero_trust_access_application" "media_app" {
   account_id = var.CLOUDFLARE_ACCOUNT_ID
   name       = "Media Stack Access"
@@ -75,5 +74,26 @@ resource "cloudflare_zero_trust_access_policy" "media_policy" {
 
   include {
     email = local.access_emails
+  }
+}
+
+# --- Jellyfin Application (Bypass) ---
+# Specific application for Jellyfin to bypass authentication (needed for TV/Mobile clients).
+resource "cloudflare_zero_trust_access_application" "jellyfin_app" {
+  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  name       = "Jellyfin (Bypass)"
+  domain     = "jellyfin.${local.media_domain}"
+  type       = "self_hosted"
+}
+
+resource "cloudflare_zero_trust_access_policy" "jellyfin_bypass" {
+  application_id = cloudflare_zero_trust_access_application.jellyfin_app.id
+  precedence     = 1
+  zone_id        = data.cloudflare_zone.media_zone.id
+  name           = "Bypass Auth"
+  decision       = "bypass"
+
+  include {
+    everyone = true
   }
 }
