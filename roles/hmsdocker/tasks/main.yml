@@ -106,7 +106,27 @@
   ansible.builtin.file:
     path: "{{ hmsdocker_library_path }}/{{ item.folder_name }}"
     state: directory
+    owner: "{{ container_uid }}"
+    group: "{{ container_gid }}"
+    mode: 0775
   with_items: "{{ hms_docker_library_folders }}"
+
+- name: Ensure download folders.
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ container_uid }}"
+    group: "{{ container_gid }}"
+    mode: 0775
+    recurse: yes
+  loop:
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet/intermediate"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet/completed"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/torrents"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/completed"
+  when: hms_docker_downloads_folder_name is defined and hms_docker_downloads_folder_name != ''
 
 - name: Ensure container config directories exist if not already
   ansible.builtin.file:

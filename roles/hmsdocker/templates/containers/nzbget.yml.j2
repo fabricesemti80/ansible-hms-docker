@@ -17,6 +17,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ${HMSD_APPS_PATH}/nzbget/config:/config
+      - ${HMSD_MOUNT_PATH}/${HMSD_PRIMARY_MOUNT_NAME}/${HMSD_DOWNLOADS_FOLDER_NAME}/usenet:/downloads
       - ${HMSD_MOUNT_PATH}:/data
     {% if hmsdocker_expose_ports_enabled_nzbget %}
     ports:
