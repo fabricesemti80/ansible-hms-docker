@@ -30,7 +30,7 @@ locals {
     cpu_sockets      = 1
 
     # Disk Configuration
-    disk_datastore_id = "vm-storage"
+    disk_datastore_id = "ceph-proxmox-rbd"
     disk_interface    = "virtio0"
     disk_size         = 32
     disk_iothread     = true
@@ -42,7 +42,7 @@ locals {
     network_firewall = false
 
     # Initialization Configuration
-    initialization_datastore_id = "vm-storage"
+    initialization_datastore_id = "ceph-proxmox-rbd"
     dns_servers                 = local.dns_servers
 
     # VM Lifecycle Settings
