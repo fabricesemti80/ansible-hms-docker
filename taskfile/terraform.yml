@@ -20,17 +20,17 @@ tasks:
     dir: terraform
     cmds:
       - task: fmt
-      - doppler run -- terraform plan -out=tfplan
+      - doppler run -- bash -c 'export TF_VAR_DOPPLER_PROJECT="$DOPPLER_PROJECT"; export TF_VAR_DOPPLER_CONFIG="$DOPPLER_CONFIG"; export TF_VAR_DOMAIN="$DOMAIN"; terraform plan -out=tfplan'
 
   apply:
     desc: "Apply the Terraform plan"
     dir: terraform
     cmds:
       - task: plan
-      - doppler run -- terraform apply tfplan
+      - doppler run -- bash -c 'export TF_VAR_DOPPLER_PROJECT="$DOPPLER_PROJECT"; export TF_VAR_DOPPLER_CONFIG="$DOPPLER_CONFIG"; export TF_VAR_DOMAIN="$DOMAIN"; terraform apply tfplan'
 
   destroy:
     desc: "Destroy the Terraform-managed infrastructure"
     dir: terraform
     cmds:
-      - doppler run -- terraform destroy -auto-approve
+      - doppler run -- bash -c 'export TF_VAR_DOPPLER_PROJECT="$DOPPLER_PROJECT"; export TF_VAR_DOPPLER_CONFIG="$DOPPLER_CONFIG"; export TF_VAR_DOMAIN="$DOMAIN"; terraform destroy -auto-approve'
