@@ -238,6 +238,7 @@ hmsdocker_authentik_enabled_checkrr: "{{ hms_docker_container_map['checkrr']['au
 hmsdocker_authentik_enabled_n8n: "{{ hms_docker_container_map['n8n']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['n8n']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 hmsdocker_authentik_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['dockpeek']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 hmsdocker_authentik_enabled_immich: "{{ hms_docker_container_map['immich']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['immich']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
+hmsdocker_authentik_enabled_beszel: "{{ hms_docker_container_map['beszel']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['beszel']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 
 # Homepage
 # Controls if the integration with Homepage is enabled for a container

@@ -8,12 +8,18 @@ services:
         max-size: "12m"
         max-file: "5"
       driver: json-file
-    environment:
-      - PORT=45678
-      - KEY=${BESZEL_AGENT_KEY}
+    networks:
+      - proxy_net
     ports:
-      - 45678:45678
+      - target: 45876
+        published: 45876
+        protocol: tcp
+        mode: host
+    environment:
+      - LISTEN=45876
+      - "KEY=${BESZEL_AGENT_KEY}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/host:ro
       # monitor other disks / partitions by mounting them to /extra-filesystems
       # - /mnt/disk1:/extra-filesystems/disk1:ro

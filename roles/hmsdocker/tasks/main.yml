@@ -5,53 +5,14 @@
 # All these facts do is process data from the container map to reduce text output during playbook runs
 - name: Build facts of enabled containers to slim play output
   ansible.builtin.set_fact:
-    enabled_containers: >-
-      {{
-        hms_docker_container_map | dict2items | 
-        selectattr('value.enabled', 'defined') |
-        selectattr('value.enabled', 'equalto', true) |
-        map(attribute='key') |
-        list
-      }}
-    enabled_containers_config_dirs: >-
-      {{
-        hms_docker_container_map | dict2items | 
-        selectattr('value.enabled', 'defined') |
-        selectattr('value.enabled', 'equalto', true) |
-        selectattr('value.directory', 'defined') |
-        selectattr('value.directory', 'equalto', true) |
-        map(attribute='key') |
-        list
-      }}
-    traefik_enabled_subdomains: >-
-      {{
-        hms_docker_container_map | dict2items | 
-        selectattr('value.enabled', 'defined') |
-        selectattr('value.enabled', 'equalto', true) |
-        selectattr('value.traefik', 'defined') |
-        selectattr('value.traefik', 'equalto', true) |
-        map(attribute='value.proxy_host_rule') |
-        list
-      }}
-    traefik_enabled_external_hosts: >-
-      {{
-        traefik_ext_hosts_list | json_query('[?enabled==true].subdomain_name')
-      }}
-    filtered_authentik_items: >-
-      {{
-        hms_docker_container_map | dict2items |
-        selectattr('value.enabled', 'defined') |
-        selectattr('value.enabled', 'equalto', true) |
-        selectattr('value.traefik', 'defined') |
-        selectattr('value.traefik', 'equalto', true) |
-        selectattr('value.authentik', 'defined') |
-        selectattr('value.authentik', 'equalto', true) |
-        selectattr('value.proxy_host_rule', 'defined')
-      }}
+    enabled_containers: "{{ hms_docker_container_map | dict2items | selectattr('value.enabled', 'defined') | selectattr('value.enabled', 'equalto', true) | map(attribute='key') | list }}"
+    enabled_containers_config_dirs: "{{ hms_docker_container_map | dict2items | selectattr('value.enabled', 'defined') | selectattr('value.enabled', 'equalto', true) | selectattr('value.directory', 'defined') | selectattr('value.directory', 'equalto', true) | map(attribute='key') | list }}"
 
-- name: Set authentik proxy enabled containers list
+- name: Set other container facts
   ansible.builtin.set_fact:
-    authentik_proxy_enabled_containers: "{{ filtered_authentik_items | json_query('[].{name: key, proxy_host_rule: value.proxy_host_rule}') }}"
+    traefik_enabled_subdomains: "{{ hms_docker_container_map | dict2items | selectattr('value.enabled', 'defined') | selectattr('value.enabled', 'equalto', true) | selectattr('value.traefik', 'defined') | selectattr('value.traefik', 'equalto', true) | map(attribute='value.proxy_host_rule') | list }}"
+    traefik_enabled_external_hosts: "{{ traefik_ext_hosts_list | json_query('[?enabled==true].subdomain_name') }}"
+    filtered_authentik_items: "{{ hms_docker_container_map | dict2items | selectattr('value.enabled', 'defined') | selectattr('value.enabled', 'equalto', true) | selectattr('value.traefik', 'defined') | selectattr('value.traefik', 'equalto', true) | selectattr('value.authentik', 'defined') | selectattr('value.authentik', 'equalto', true) | selectattr('value.proxy_host_rule', 'defined') }}"
 
 - name: Get list of container task files in the role
   ansible.builtin.set_fact:
