@@ -37,7 +37,8 @@ services:
       {% endif %}
       {% if hmsdocker_traefik_enabled_portainer %}
       - traefik.enable=true
-      - traefik.http.services.portainer-${COMPOSE_PROJECT}.loadbalancer.server.port=9000
+      - traefik.http.services.portainer-${COMPOSE_PROJECT}.loadbalancer.server.port=9443
+      - traefik.http.services.portainer-${COMPOSE_PROJECT}.loadbalancer.server.scheme=https
       - traefik.http.routers.portainer-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['portainer']['proxy_host_rule'] | default('portainer') }}.${HMSD_DOMAIN}`)
         {% if not hmsdocker_expose_public_enabled_portainer %}
       - traefik.http.routers.portainer-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
