@@ -49,6 +49,7 @@ services:
     {% endif %}
     volumes:
       - ${HMSD_APPS_PATH}/radarr/config:/config
+      - ${HMSD_MOUNT_PATH}/${HMSD_PRIMARY_MOUNT_NAME}/${HMSD_DOWNLOADS_FOLDER_NAME}:/downloads
       - ${HMSD_MOUNT_PATH}:/data
     {% if hmsdocker_expose_ports_enabled_radarr %}
     ports:
@@ -101,6 +102,7 @@ services:
     {% endif %}
     volumes:
       - ${HMSD_APPS_PATH}/radarr-4k/config:/config
+      - ${HMSD_MOUNT_PATH}/${HMSD_PRIMARY_MOUNT_NAME}/${HMSD_DOWNLOADS_FOLDER_NAME}:/downloads
       - ${HMSD_MOUNT_PATH}:/data
     {% if hmsdocker_expose_ports_enabled_radarr %}
     ports:

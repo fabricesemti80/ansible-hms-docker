@@ -136,8 +136,14 @@
     - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet"
     - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet/intermediate"
     - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet/completed"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet/completed/sonarr"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/usenet/completed/radarr"
     - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/torrents"
     - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/completed"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/completed/sonarr"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/completed/radarr"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/completed/lidarr"
+    - "{{ hmsdocker_primary_mount_path }}/{{ hms_docker_downloads_folder_name }}/completed/readarr"
   when: hms_docker_downloads_folder_name is defined and hms_docker_downloads_folder_name != ''
 
 - name: Ensure container config directories exist if not already

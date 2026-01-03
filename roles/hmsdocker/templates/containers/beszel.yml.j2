@@ -1,0 +1,51 @@
+services:
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    restart: ${RESTART_POLICY}
+    logging:
+      options:
+        max-size: "12m"
+        max-file: "5"
+      driver: json-file
+    networks:
+      - proxy_net
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${HMSD_APPS_PATH}/beszel/config:/beszel_data
+    {% if hmsdocker_traefik_enabled_beszel or hmsdocker_homepage_enabled_beszel or hmsdocker_container_enabled_dockpeek %}
+    labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['beszel']['proxy_host_rule'] | default('beszel') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=8090
+      - dockpeek.tags=monitoring,infrastructure
+      {% endif %}
+      {% if hmsdocker_traefik_enabled_beszel %}
+      - traefik.enable=true
+      - traefik.http.services.beszel-${COMPOSE_PROJECT}.loadbalancer.server.port=8090
+      - traefik.http.routers.beszel-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['beszel']['proxy_host_rule'] | default('beszel') }}.${HMSD_DOMAIN}`)
+        {% if not hmsdocker_expose_public_enabled_beszel %}
+      - traefik.http.routers.beszel-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
+        {% endif %}
+        {% if hmsdocker_authentik_enabled_beszel %}
+      - traefik.http.routers.beszel-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-beszel-midware@docker
+        {% endif %}
+      {% endif %}
+      {% if hmsdocker_homepage_enabled_beszel %}
+      - homepage.group=Infrastructure
+      - homepage.name=Beszel
+      - homepage.icon=beszel.png
+      - homepage.href=http://{{ hms_docker_container_map['beszel']['proxy_host_rule'] | default('beszel') }}.${HMSD_DOMAIN}
+      - homepage.description=Resource Monitoring
+      {% if hmsdocker_homepage_stats_enabled_beszel %}
+      - homepage.showStats=true
+      {% endif %}
+      {% endif %}
+    {% endif %}
+    {% if hmsdocker_expose_ports_enabled_beszel %}
+    ports:
+      - 8090:8090
+    {% endif %}

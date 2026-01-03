@@ -385,3 +385,16 @@ hms_docker_container_map:
     expose_to_public: no
     homepage: yes
     homepage_stats: yes
+  beszel:
+    enabled: yes
+    proxy_host_rule: beszel
+    directory: yes
+    traefik: yes
+    authentik: no
+    authentik_provider_type: proxy
+    expose_to_public: no
+    homepage: yes
+    homepage_stats: no
+  beszel-agent:
+    enabled: yes
+    directory: no
