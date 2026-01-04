@@ -23,3 +23,11 @@ $ npm run build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+### Deployment
+
+```
+$ make gen-docs-deploy
+```
+
+This command will build the website and push the `build/` directory to the `gh-pages` branch.

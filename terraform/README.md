@@ -7,13 +7,19 @@ This guide details the secrets and steps required to manage the infrastructure i
 We use **Doppler** to securely manage secrets. You need to create a project named `ansible-hms-docker` in Doppler and add the following secrets to the `dev` config:
 
 | Secret Name | Description | Example / Format |
-|-------------|-------------|------------------|
-| `PROXMOX_AUTH_TOKEN` | Proxmox API Token | `terraform@pve!provider=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
+|---|---|---|
+| `PROXMOX_AUTH_TOKEN` | API Token for Proxmox (User: `terraform@pve`, Realm: `pve`) | `terraform@pve!provider=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API Token with permissions for DNS, Tunnels, and Access | |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID | |
+| `ACCESS_EMAILS` | List of email addresses allowed to access the applications | |
+| `DOPPLER_TOKEN` | Doppler Service Token (automatically injected by `doppler run`) | |
+| `DOMAIN` | The root domain for the media stack (e.g., `example.com`) | |
 
-### Optional Secrets (If adding more providers)
-If you decide to add Cloudflare or other providers later, you will also need:
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
+### Generated Outputs
+
+Terraform will automatically generate and save the following secrets back to Doppler:
+
+- `CLOUDFLARE_TUNNEL_TOKEN_<DOMAIN_UNDERSCORE>`: The token for the created Cloudflare Tunnel.
 
 ## 2. Local Setup
 
