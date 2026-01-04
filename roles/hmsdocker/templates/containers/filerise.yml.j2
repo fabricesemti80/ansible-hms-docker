@@ -6,8 +6,6 @@ services:
       - proxy_net
     restart: ${RESTART_POLICY}
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
       - TZ=${TIMEZONE}
       - PERSISTENT_TOKENS_KEY=${PERSISTENT_TOKENS_KEY}
     volumes:
@@ -23,7 +21,7 @@ services:
       {% endif %}
       {% if hmsdocker_traefik_enabled_filerise %}
       - traefik.enable=true
-      - traefik.http.services.filerise-${COMPOSE_PROJECT}.loadbalancer.server.port=3000
+      - traefik.http.services.filerise-${COMPOSE_PROJECT}.loadbalancer.server.port=80
       - traefik.http.routers.filerise-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['filerise']['proxy_host_rule'] | default('rise') }}.${HMSD_DOMAIN}`)
         {% if not hmsdocker_expose_public_enabled_filerise %}
       - traefik.http.routers.filerise-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
