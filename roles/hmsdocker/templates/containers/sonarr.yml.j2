@@ -34,7 +34,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_sonarr %}
-      - homepage.group=Managers
+      - homepage.group=Media
       - homepage.name=Sonarr
       - homepage.icon=sonarr.png
       - homepage.href=http://{{ hms_docker_container_map['sonarr']['proxy_host_rule'] | default('sonarr') }}.${HMSD_DOMAIN}
@@ -88,7 +88,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_sonarr %}
-      - homepage.group=Managers - 4K
+      - homepage.group=Media - 4K
       - homepage.name=Sonarr - 4K
       - homepage.icon=sonarr.png
       - homepage.href=http://{{ hms_docker_container_map['sonarr']['proxy_host_rule'] | default('sonarr') }}-4k.${HMSD_DOMAIN}

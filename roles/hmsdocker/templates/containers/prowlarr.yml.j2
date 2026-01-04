@@ -40,7 +40,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_prowlarr %}
-      - homepage.group=Managers
+      - homepage.group=Media
       - homepage.name=Prowlarr
       - homepage.icon=prowlarr.png
       - homepage.href=http://{{ hms_docker_container_map['prowlarr']['proxy_host_rule'] | default('prowlarr')}}.${HMSD_DOMAIN}

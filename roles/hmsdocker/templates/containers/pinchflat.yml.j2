@@ -33,10 +33,10 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_pinchflat %}
-      - homepage.group=Managers
+      - homepage.group=Media
       - homepage.name=Pinchflat
       - homepage.icon=pinchflat.png
-      - homepage.href=https://{{ hms_docker_container_map['pinchflat']['proxy_host_rule'] | default('pinchflat') }}.${HMSD_DOMAIN}
+      - homepage.href=http://{{ hms_docker_container_map['pinchflat']['proxy_host_rule'] | default('pinchflat') }}.${HMSD_DOMAIN}
       - homepage.description=YouTube Archiver
       {% if hmsdocker_homepage_stats_enabled_pinchflat %}
       - homepage.showStats=true

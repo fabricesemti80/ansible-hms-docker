@@ -36,7 +36,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_lidarr %}
-      - homepage.group=Managers
+      - homepage.group=Media
       - homepage.name=Lidarr
       - homepage.icon=lidarr.png
       - homepage.href=http://{{ hms_docker_container_map['lidarr']['proxy_host_rule'] | default('lidarr') }}.${HMSD_DOMAIN}

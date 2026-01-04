@@ -31,7 +31,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_checkrr %}
-      - homepage.group=Managers
+      - homepage.group=Media
       - homepage.name=Checkrr
       - homepage.icon=checkrr.png
       - homepage.href=https://{{ hms_docker_container_map['checkrr']['proxy_host_rule'] | default('checkrr') }}.${HMSD_DOMAIN}

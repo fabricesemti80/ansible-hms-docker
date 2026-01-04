@@ -34,7 +34,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_radarr %}
-      - homepage.group=Managers
+      - homepage.group=Media
       - homepage.name=Radarr
       - homepage.icon=radarr.png
       - homepage.href=http://{{ hms_docker_container_map['radarr']['proxy_host_rule'] | default('radarr') }}.${HMSD_DOMAIN}
@@ -87,7 +87,7 @@ services:
         {% endif %}
       {% endif %}
       {% if hmsdocker_homepage_enabled_radarr %}
-      - homepage.group=Managers - 4K
+      - homepage.group=Media - 4K
       - homepage.name=Radarr - 4K
       - homepage.icon=radarr.png
       - homepage.href=http://{{ hms_docker_container_map['radarr']['proxy_host_rule'] | default('radarr') }}-4k.${HMSD_DOMAIN}

@@ -1,0 +1,41 @@
+services:
+  filebrowser:
+    image: gtstef/filebrowser:beta
+    container_name: filebrowser
+    networks:
+      - proxy_net
+    restart: ${RESTART_POLICY}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TIMEZONE}
+      - FILEBROWSER_ADMIN_PASSWORD=${FILEBROWSER_ADMIN_PASSWORD}
+    volumes:
+      - ${HMSD_MOUNT_PATH}:/srv
+      - ${HMSD_APPS_PATH}/filebrowser/data:/home/filebrowser/data
+    {% if hmsdocker_traefik_enabled_filebrowser or hmsdocker_homepage_enabled_filebrowser or hmsdocker_container_enabled_dockpeek %}
+    labels:
+      {% if hmsdocker_container_enabled_dockpeek %}
+      - dockpeek.link=http://{{ hms_docker_container_map['filebrowser']['proxy_host_rule'] | default('file') }}.${HMSD_DOMAIN}
+      - dockpeek.ports=80
+      - dockpeek.tags=utilities,file-manager
+      {% endif %}
+      {% if hmsdocker_traefik_enabled_filebrowser %}
+      - traefik.enable=true
+      - traefik.http.services.filebrowser-${COMPOSE_PROJECT}.loadbalancer.server.port=80
+      - traefik.http.routers.filebrowser-${COMPOSE_PROJECT}.rule=Host(`{{ hms_docker_container_map['filebrowser']['proxy_host_rule'] | default('file') }}.${HMSD_DOMAIN}`)
+        {% if not hmsdocker_expose_public_enabled_filebrowser %}
+      - traefik.http.routers.filebrowser-${COMPOSE_PROJECT}.middlewares=internal-ipallowlist@file
+        {% endif %}
+        {% if hmsdocker_authentik_enabled_filebrowser %}
+      - traefik.http.routers.filebrowser-${COMPOSE_PROJECT}.middlewares=authentik-proxy-${COMPOSE_PROJECT}-filebrowser-midware@docker
+        {% endif %}
+      {% endif %}
+      {% if hmsdocker_homepage_enabled_filebrowser %}
+      - homepage.group=Utilities
+      - homepage.name=Filebrowser
+      - homepage.icon=sh-filebrowser-quantum.png
+      - homepage.href=http://{{ hms_docker_container_map['filebrowser']['proxy_host_rule'] | default('file') }}.${HMSD_DOMAIN}
+      - homepage.description=Web File Manager
+      {% endif %}
+    {% endif %}

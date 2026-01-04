@@ -56,6 +56,8 @@ hmsdocker_container_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['
 hmsdocker_container_enabled_immich: "{{ hms_docker_container_map['immich']['enabled'] | default(False) }}"
 hmsdocker_container_enabled_beszel: "{{ hms_docker_container_map['beszel']['enabled'] | default(False) }}"
 hmsdocker_container_enabled_beszel_agent: "{{ hms_docker_container_map['beszel-agent']['enabled'] | default(False) }}"
+hmsdocker_container_enabled_filebrowser: "{{ hms_docker_container_map['filebrowser']['enabled'] | default(False) }}"
+hmsdocker_container_enabled_filerise: "{{ hms_docker_container_map['filerise']['enabled'] | default(False) }}"
 
 # Traefik computed variables
 # Controls if Traefik is enabled for a container
@@ -101,6 +103,8 @@ hmsdocker_traefik_enabled_n8n: "{{ hms_docker_container_map['n8n']['traefik'] | 
 hmsdocker_traefik_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
 hmsdocker_traefik_enabled_immich: "{{ hms_docker_container_map['immich']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
 hmsdocker_traefik_enabled_beszel: "{{ hms_docker_container_map['beszel']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
+hmsdocker_traefik_enabled_filebrowser: "{{ hms_docker_container_map['filebrowser']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
+hmsdocker_traefik_enabled_filerise: "{{ hms_docker_container_map['filerise']['traefik'] | default(False) and hmsdocker_container_enabled_traefik }}"
 
 # Public container exposure computed variables
 # Controls Traefik rules to allow/disallow accessing the containers from the public internet via an allowlist
@@ -145,6 +149,8 @@ hmsdocker_expose_public_enabled_n8n: "{{ hms_docker_container_map['n8n']['expose
 hmsdocker_expose_public_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['expose_to_public'] | default(False) }}"
 hmsdocker_expose_public_enabled_immich: "{{ hms_docker_container_map['immich']['expose_to_public'] | default(False) }}"
 hmsdocker_expose_public_enabled_beszel: "{{ hms_docker_container_map['beszel']['expose_to_public'] | default(False) }}"
+hmsdocker_expose_public_enabled_filebrowser: "{{ hms_docker_container_map['filebrowser']['expose_to_public'] | default(False) }}"
+hmsdocker_expose_public_enabled_filerise: "{{ hms_docker_container_map['filerise']['expose_to_public'] | default(False) }}"
 
 # Container host port mapping computed variables
 # Controls if the container "exposes" its ports on the host
@@ -190,6 +196,8 @@ hmsdocker_expose_ports_enabled_n8n: "{{ True if (container_expose_ports or not h
 hmsdocker_expose_ports_enabled_dockpeek: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_dockpeek) else False }}"
 hmsdocker_expose_ports_enabled_immich: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_immich) else False }}"
 hmsdocker_expose_ports_enabled_beszel: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_beszel) else False }}"
+hmsdocker_expose_ports_enabled_filebrowser: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_filebrowser) else False }}"
+hmsdocker_expose_ports_enabled_filerise: "{{ True if (container_expose_ports or not hmsdocker_container_enabled_traefik or not hmsdocker_traefik_enabled_filerise) else False }}"
 
 # Authentik computed variables
 # Controls global authentik variables
@@ -239,6 +247,8 @@ hmsdocker_authentik_enabled_n8n: "{{ hms_docker_container_map['n8n']['authentik'
 hmsdocker_authentik_enabled_dockpeek: "{{ hms_docker_container_map['dockpeek']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['dockpeek']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 hmsdocker_authentik_enabled_immich: "{{ hms_docker_container_map['immich']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['immich']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 hmsdocker_authentik_enabled_beszel: "{{ hms_docker_container_map['beszel']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['beszel']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
+hmsdocker_authentik_enabled_filebrowser: "{{ hms_docker_container_map['filebrowser']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['filebrowser']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
+hmsdocker_authentik_enabled_filerise: "{{ hms_docker_container_map['filerise']['authentik']            | default(False) and hmsdocker_authentik_enabled_globally and hms_docker_container_map['filerise']['authentik_provider_type']            | default('proxy') == 'proxy' }}"
 
 # Homepage
 # Controls if the integration with Homepage is enabled for a container
@@ -272,6 +282,8 @@ hmsdocker_homepage_enabled_n8n: "{{ hmsdocker_container_enabled_homepage and hms
 hmsdocker_homepage_enabled_dockpeek: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['dockpeek']['homepage'] | default(False) }}"
 hmsdocker_homepage_enabled_immich: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['immich']['homepage'] | default(False) }}"
 hmsdocker_homepage_enabled_beszel: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['beszel']['homepage'] | default(False) }}"
+hmsdocker_homepage_enabled_filebrowser: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['filebrowser']['homepage'] | default(False) }}"
+hmsdocker_homepage_enabled_filerise: "{{ hmsdocker_container_enabled_homepage and hms_docker_container_map['filerise']['homepage'] | default(False) }}"
 
 # Controls if the container should show stats (CPU, RAM, RX, TX) on Homepage
 hmsdocker_homepage_stats_enabled_traefik: "{{ hmsdocker_homepage_enabled_traefik and hms_docker_container_map['traefik']['homepage_stats'] | default(False) }}"
@@ -304,6 +316,8 @@ hmsdocker_homepage_stats_enabled_n8n: "{{ hmsdocker_homepage_enabled_n8n and hms
 hmsdocker_homepage_stats_enabled_dockpeek: "{{ hmsdocker_homepage_enabled_dockpeek and hms_docker_container_map['dockpeek']['homepage_stats'] | default(False) }}"
 hmsdocker_homepage_stats_enabled_immich: "{{ hmsdocker_homepage_enabled_immich and hms_docker_container_map['immich']['homepage_stats'] | default(False) }}"
 hmsdocker_homepage_stats_enabled_beszel: "{{ hmsdocker_homepage_enabled_beszel and hms_docker_container_map['beszel']['homepage_stats'] | default(False) }}"
+hmsdocker_homepage_stats_enabled_filebrowser: "{{ hmsdocker_homepage_enabled_filebrowser and hms_docker_container_map['filebrowser']['homepage_stats'] | default(False) }}"
+hmsdocker_homepage_stats_enabled_filerise: "{{ hmsdocker_homepage_enabled_filerise and hms_docker_container_map['filerise']['homepage_stats'] | default(False) }}"
 
 #######################################################################
 

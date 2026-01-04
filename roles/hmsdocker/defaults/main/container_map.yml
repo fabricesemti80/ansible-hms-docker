@@ -398,3 +398,23 @@ hms_docker_container_map:
   beszel-agent:
     enabled: yes
     directory: no
+  filebrowser:
+    enabled: yes
+    proxy_host_rule: file
+    directory: yes
+    traefik: yes
+    authentik: no
+    authentik_provider_type: proxy
+    expose_to_public: no
+    homepage: yes
+    homepage_stats: no
+  filerise:
+    enabled: yes
+    proxy_host_rule: rise
+    directory: yes
+    traefik: yes
+    authentik: no
+    authentik_provider_type: proxy
+    expose_to_public: no
+    homepage: yes
+    homepage_stats: no

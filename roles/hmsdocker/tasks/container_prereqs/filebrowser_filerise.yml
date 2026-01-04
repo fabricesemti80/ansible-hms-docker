@@ -1,0 +1,20 @@
+- name: Ensure Filebrowser data directories exist
+  ansible.builtin.file:
+    path: "{{ hms_docker_apps_path }}/filebrowser/data"
+    state: directory
+    owner: "{{ container_uid }}"
+    group: "{{ container_gid }}"
+    mode: 0755
+  when: hmsdocker_container_enabled_filebrowser
+
+- name: Ensure Filerise data directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ container_uid }}"
+    group: "{{ container_gid }}"
+    mode: 0755
+  loop:
+    - "{{ hms_docker_apps_path }}/filerise/users"
+    - "{{ hms_docker_apps_path }}/filerise/metadata"
+  when: hmsdocker_container_enabled_filerise

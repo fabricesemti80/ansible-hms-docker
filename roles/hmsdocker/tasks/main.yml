@@ -133,6 +133,10 @@
   ansible.builtin.import_tasks: "container_prereqs/authentik.yml"
   when: hmsdocker_authentik_enabled_globally
 
+- name: Ensure Filebrowser and Filerise prereqs
+  ansible.builtin.include_tasks: "container_prereqs/filebrowser_filerise.yml"
+  when: hmsdocker_container_enabled_filebrowser or hmsdocker_container_enabled_filerise
+
 - name: Run container prereqs if available
   ansible.builtin.include_tasks: "container_prereqs/{{ container_task_name }}.yml"
   loop: "{{ container_prereqs }}"
