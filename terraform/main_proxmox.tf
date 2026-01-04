@@ -32,7 +32,7 @@ locals {
     # Disk Configuration
     disk_datastore_id = "ceph-proxmox-rbd"
     disk_interface    = "virtio0"
-    disk_size         = 40
+    disk_size         = 60
     disk_iothread     = true
 
     # Network Configuration
